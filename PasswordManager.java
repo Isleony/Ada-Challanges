@@ -2,6 +2,9 @@ import java.io.*; // Importa classes necessárias para manipulação de arquivos
 import java.util.*; // Importa classes necessárias para manipulação de coleções, como Map
 import java.nio.file.*; // Importa classes necessárias para manipulação de arquivos e caminhos 
 import java.security.SecureRandom;// Importa a classe SecureRandom para gerar números aleatórios seguros
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 
 
@@ -110,3 +113,34 @@ public class PasswordManager { // Gerenciador de Senhas para Redes Sociais
         // A senha gerada é uma String contendo 16 caracteres aleatórios, garantindo uma boa
     }
 }
+
+// Implementação de criptografia simples (AES) para as senhas armazenadas
+
+
+class CryptoUtils {
+    // Chave secreta fixa para exemplo (NUNCA use uma chave fixa em produção!)
+    private static final String SECRET_KEY = "1234567890abcdef"; // 16 bytes para AES-128
+
+    public static String encrypt(String strToEncrypt) { // Criptografa uma String usando AES
+        // Este método recebe uma String e a criptografa usando o algoritmo AES.
+        try { // Cria uma instância de SecretKeySpec com a chave secreta
+            // A chave deve ter 16 bytes para AES-128, 24 bytes para AES-192 ou 32 bytes para AES-256.
+            // A chave deve ser mantida em segredo e não deve ser fixa em produção.
+            SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY.getBytes(), "AES"); // Cria uma instância de SecretKeySpec com a chave secreta
+            // A chave é convertida em bytes e usada para inicializar o Cipher.
+            Cipher cipher = Cipher.getInstance("AES"); // Cria uma instância do Cipher para criptografia AES
+            // O Cipher é configurado para o modo de criptografia AES.
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);// Inicializa o Cipher no modo de criptografia com a chave secreta
+            // O Cipher é configurado para criptografar os dados usando a chave secreta.
+            byte[] encrypted = cipher.doFinal(strToEncrypt.getBytes());// Criptografa a String de entrada
+            // A String de entrada é convertida em bytes e criptografada usando o Cipher.
+            return Base64.getEncoder().encodeToString(encrypted); // Retorna a String criptografada como uma String codificada em Base64
+            // A String criptografada é convertida para Base64 para facilitar o armazenamento     
+        } catch (Exception e) { // Trata exceções ao criptografar a String
+            // Se ocorrer um erro ao criptografar, uma mensagem de erro é exibida.
+            System.err.println("Erro ao criptografar: " + e.getMessage()); // Exibe uma mensagem de erro se houver problemas ao criptografar a String
+            // Isso pode ocorrer se a chave não for válida ou se houver problemas com o algoritmo de
+            return null; // Retorna null se ocorrer um erro ao criptografar
+            // Se a criptografia falhar, o método retorna null.
+        }
+    }}
